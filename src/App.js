@@ -1,6 +1,7 @@
 import React from 'react';
 import './App.scss';
 import {useState} from 'react';
+import math from 'mathjs';
 
 
 
@@ -31,7 +32,10 @@ const buttonArray=[
 ]
 
 function App() {
-  const [Calc, setCalc] = useState("0")
+  const [Calc, setCalc] = useState("0");
+  const [NumB, setNumB] = useState("");
+  const [CurrentOP, setCurrentOP] = useState("");
+
 
 
   const handleClick = (obj) =>{
@@ -69,6 +73,7 @@ function App() {
           </div>
           <div id="display">
             {Calc}
+            {math.evaluate("5x5")}
           </div>
         </div>
 
