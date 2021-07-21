@@ -36,6 +36,10 @@ const operationsArray=[
   "-", "+", "×", "÷"
 ]
 
+const numbersArray=[
+  "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"
+]
+
 function App() {
   const [Calc, setCalc] = useState("15");
   const [NumB, setNumB] = useState("");
@@ -77,15 +81,26 @@ function App() {
         break;
 
       case "dot":
-        if (Calc[Calc.lenght-1] != "."){
+
+        let lastIndex = Calc.lastIndexOf(".");
+        let testString = Calc.substring(lastIndex);
+        let operationBefore = false
+        for (let i=0; i < operationsArray.length; i++){
+          if (testString.includes(operationsArray[i])){
+            operationBefore = true;
+          }
+        }
+        if(!Calc.includes(".") && numbersArray.includes(Calc[Calc.length-1])){
+         setCalc(Calc + ".")
+        }else if(operationBefore && numbersArray.includes(Calc[Calc.length-1])){
           setCalc(Calc + ".")
         }
         break;
 
       case "equals":
-        let calcTemp = Calc
-        let finalCalc = calcTemp.replace(/×/, "*").replace(/÷/, "/");
+        let finalCalc = Calc.replace(/×/g, "*").replace(/÷/g, "/");
         setCalc(evaluate(finalCalc));
+        break;
    }
   }
 
