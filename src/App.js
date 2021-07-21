@@ -1,11 +1,7 @@
 import React from 'react';
 import './App.scss';
 import { useState } from 'react';
-import { evaluate, string } from 'mathjs';
-import { callExpression } from '@babel/types';
-
-
-
+import { evaluate} from 'mathjs';
 
 const buttonArray=[
   {key:"0", id:"zero", func:"0", type:"num", trigger:13},
@@ -26,26 +22,18 @@ const buttonArray=[
   {key:"=", id:"equals", func:"=", type:"equals", trigger:13},
   {key:"AC", id:"clear", func:"AC", type:"AC", trigger:13},
   {key:"⌫", id:"backspace", func:"back", type:"back", trigger:13},
-  {key:"M+", id:"memory add", func:"M+", type:"memory", trigger:13},
-  {key:"M-", id:"memory subtract", func:"M-", type:"memory", trigger:13},
-  {key:"MR", id:"memory recall", func:"MR", type:"memory", trigger:13},
-  {key:"MC", id:"memory clear", func:"MC", type:"memory", trigger:13}
-]
-
-const operationsArray=[
-  "-", "+", "×", "÷"
-]
-
-const numbersArray=[
-  "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"
-]
+  {key:"M+", id:"memory add", func:"M+", type:"memory add", trigger:13},
+  {key:"M-", id:"memory subtract", func:"M-", type:"memory subtract", trigger:13},
+  {key:"MR", id:"memory recall", func:"MR", type:"memory recall", trigger:13},
+  {key:"MC", id:"memory clear", func:"MC", type:"memory clear", trigger:13}
+];
+const operationsArray=["-", "+", "×", "÷"];
+const numbersArray=["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
 
 function App() {
-  const [Calc, setCalc] = useState("15");
-  const [NumB, setNumB] = useState("");
-  const [CurrentOP, setCurrentOP] = useState("");
-
-
+  const [Calc, setCalc] = useState("0");
+  const [Memory, setMemory] = useState("0");
+  
 
 
   const handleClick = (obj) =>{
@@ -81,13 +69,13 @@ function App() {
         break;
 
       case "dot":
-
         let lastIndex = Calc.lastIndexOf(".");
         let testString = Calc.substring(lastIndex);
         let operationBefore = false
         for (let i=0; i < operationsArray.length; i++){
           if (testString.includes(operationsArray[i])){
             operationBefore = true;
+            break;
           }
         }
         if(!Calc.includes(".") && numbersArray.includes(Calc[Calc.length-1])){
@@ -97,9 +85,33 @@ function App() {
         }
         break;
 
+      case "back":
+        if(Calc.length == 1){
+          setCalc("0");
+        } else {
+          setCalc(Calc.slice(0, -1));
+        }
+        break;
+
       case "equals":
         let finalCalc = Calc.replace(/×/g, "*").replace(/÷/g, "/");
         setCalc(evaluate(finalCalc));
+        break;
+
+      case "memory add":
+        setMemory(evaluate(Memory + "+" + Calc));
+        break;
+
+      case "memory subtract":
+        setMemory(evaluate(Memory + "-" + Calc));
+        break;
+      
+      case "memory clear":
+        setMemory("0");
+        break;
+
+      case "memory recall":
+        setCalc(Memory);
         break;
    }
   }
