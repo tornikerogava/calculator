@@ -1,7 +1,9 @@
 import React from 'react';
 import './App.scss';
-import {useState} from 'react';
-import math from 'mathjs';
+import { useState } from 'react';
+import { evaluate, string } from 'mathjs';
+import { callExpression } from '@babel/types';
+
 
 
 
@@ -19,7 +21,6 @@ const buttonArray=[
   {key:"×", id:"multiply", func:"*", type:"op", trigger:13},
   {key:"÷", id:"divide", func:"/", type:"op", trigger:13},
   {key:"+", id:"add", func:"+", type:"op", trigger:13},
-  {key:"%", id:"percent",  func:"%", type:"op", trigger:13},
   {key:".", id:"decimal", func:".", type:"dot", trigger:13},
   {key:"-", id:"subtract", func:"-", type:"minus", trigger:13},
   {key:"=", id:"equals", func:"=", type:"equals", trigger:13},
@@ -31,10 +32,15 @@ const buttonArray=[
   {key:"MC", id:"memory clear", func:"MC", type:"memory", trigger:13}
 ]
 
+const operationsArray=[
+  "-", "+", "×", "÷"
+]
+
 function App() {
-  const [Calc, setCalc] = useState("0");
+  const [Calc, setCalc] = useState("15");
   const [NumB, setNumB] = useState("");
   const [CurrentOP, setCurrentOP] = useState("");
+
 
 
 
@@ -51,6 +57,35 @@ function App() {
           setCalc(obj.key);
         }
         break;
+        
+      case "op": 
+        if (Calc[Calc.length-1] == "-" && operationsArray.includes(Calc[Calc.length-2])){
+          setCalc(Calc.slice(0, Calc.length-2) + obj.key);
+        }else if (operationsArray.includes(Calc[Calc.length-1])){
+          setCalc(Calc.slice(0, Calc.length-1) + obj.key);
+        } else {
+          setCalc(Calc + obj.key);
+        }
+        break;
+
+      case "minus":
+        if (Calc[Calc.length-1] == "-" && operationsArray.includes(Calc[Calc.length-2])){
+          setCalc(Calc.slice(0, Calc.length-2) + "-");
+        } else {
+          setCalc(Calc + "-")
+        }
+        break;
+
+      case "dot":
+        if (Calc[Calc.lenght-1] != "."){
+          setCalc(Calc + ".")
+        }
+        break;
+
+      case "equals":
+        let calcTemp = Calc
+        let finalCalc = calcTemp.replace(/×/, "*").replace(/÷/, "/");
+        setCalc(evaluate(finalCalc));
    }
   }
 
@@ -73,7 +108,7 @@ function App() {
           </div>
           <div id="display">
             {Calc}
-            {math.evaluate("5x5")}
+            
           </div>
         </div>
 
